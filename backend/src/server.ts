@@ -10,5 +10,5 @@ app.get("/health", (_request, response) => {
 });
 
 app.listen(port, () => {
-  console.log(`Nova Salud API escuchando en http://localhost:${port}`);
+  console.log(`Nova Salud API activa en http://localhost:${port}`);
 });
