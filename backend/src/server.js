@@ -1,4 +1,4 @@
-import express from "express";
+const express = require("express");
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -10,5 +10,5 @@ app.get("/health", (_request, response) => {
 });
 
 app.listen(port, () => {
-  console.log(`Nova Salud API escuchando en http://localhost:${port}`);
+  console.log(`Nova Salud API activa en http://localhost:${port}`);
 });
