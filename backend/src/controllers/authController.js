@@ -2,6 +2,39 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
+const register = async (req, res) => {
+  const { nombre, email, password } = req.body;
+
+  if (!nombre || !email || !password) {
+    return res.status(400).json({ message: 'Todos los campos son requeridos' });
+  }
+
+  try {
+    const [existentes] = await db.query('SELECT id FROM usuarios WHERE email = ?', [email]);
+    if (existentes.length > 0) {
+      return res.status(400).json({ message: 'El correo ya está registrado' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const [result] = await db.query(
+      'INSERT INTO usuarios (nombre, email, password, rol_id) VALUES (?, ?, ?, ?)',
+      [nombre, email, hashedPassword, 2]
+    );
+
+    return res.status(201).json({
+      message: 'Usuario registrado exitosamente',
+      usuario: {
+        id: result.insertId,
+        nombre,
+        email
+      }
+    });
+  } catch (error) {
+    console.error('Error en registro:', error);
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -54,4 +87,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+module.exports = { login, register };
