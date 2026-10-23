@@ -1,14 +1,21 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require('express');
 const authRoutes = require('./routes/authRoutes');
+const pool = require("./db");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.get('/health', (_request, response) => {
-  response.json({ status: 'ok' });
+app.get("/health", async (_request, response) => {
+  try {
+    await pool.query("SELECT 1");
+    response.json({ database: "Conectada exitosamente" });
+  } catch (error) {
+    console.error("Error al conectar con la base de datos:", error);
+    response.status(503).json({ database: "No se pudo conectar" });
+  }
 });
 
 app.use('/api/auth', authRoutes);
