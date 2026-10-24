@@ -51,12 +51,7 @@ const login = async (req, res) => {
 
     const usuario = rows[0];
 
-    let passwordValida = false;
-    if (usuario.password.startsWith('$2a$') || usuario.password.startsWith('$2b$')) {
-      passwordValida = await bcrypt.compare(password, usuario.password);
-    } else {
-      passwordValida = (password === usuario.password);
-    }
+    const passwordValida = await bcrypt.compare(password, usuario.password);
 
     if (!passwordValida) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
@@ -86,5 +81,5 @@ const login = async (req, res) => {
     return res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
+module.exports = { login };
 
-module.exports = { login, register };
